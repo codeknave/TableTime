@@ -1,0 +1,13 @@
+This #adjective# hat has #noun# on top
+#adjective#
+{
+frilly
+pink
+tiny
+}
+#noun#
+{
+poop
+dogs
+feet
+}
