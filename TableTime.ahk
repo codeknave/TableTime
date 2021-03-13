@@ -103,9 +103,9 @@ ButtonAdv:
       if (addtolist == false and InStr(a_loopreadline, key)) ; found keyword signifying start of table
         addtolist := true 
     }
-    sentence := StrReplace(sentence, key, pickrandom(keytab%a_index%)) ; pick a random word for each keyword and modify the sentence
+    sentence := StrReplace(sentence, key, pickrandom(keytab%a_index%), , 1) ; pick a random word for each keyword and modify the sentence
   }
-
+  ; duplicate keywords always pick same thing
   pickrandom(array)
   {
     Random, randind, 1, array.Length()
