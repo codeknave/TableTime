@@ -1,7 +1,7 @@
 This #adjective# hat has #noun# on top
 #adjective#
 {
-frilly
+frilly with #color# frills
 pink
 tiny
 }
@@ -10,4 +10,10 @@ tiny
 poop
 dogs
 feet
+}
+#color#
+{
+  umber
+  opal
+  celadon
 }
