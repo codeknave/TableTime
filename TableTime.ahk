@@ -64,8 +64,53 @@ ButtonAdv:
   filename := filename ".txt"
   file := fileopen(A_WorkingDir "\advtabs\" filename, "r`n")
   sentence := file.ReadLine()
+ReplaceKeys:
   keylist := [] ; stores keywords
+  lastbracketseen := "" ; track whether we are in a table or not
   addtolist := False
+  findkeys() ; add keys to keylist from sentence
+  for ind,key in keylist
+  {
+    keynum := A_Index
+    keytab%keynum% := [] ; make a table for each keyword
+    loop, read, %A_WorkingDir%\advtabs\%filename%
+    {
+      if (A_Index == 1)
+        Continue ; not adding first line to table
+      if InStr(a_loopreadline, "{") ; track whether we're in a table
+        lastbracketseen := "{"
+      else if InStr(a_loopreadline, "}")
+        lastbracketseen := "}"
+
+      if (addtolist == true and A_LoopReadLine != "{" and A_LoopReadLine != "}")
+        keytab%keynum%.Push(A_LoopReadLine) ; If we found the start of the table inside the brackets, start adding words line by line
+      if (instr(A_LoopReadLine, "}") and addtolist == true)
+      {
+        addtolist := False
+        Break ; stop adding after coming to end of list
+      }
+      if (addtolist == false and InStr(a_loopreadline, key) and lastbracketseen == "}" or lastbracketseen == "") ; found keyword signifying start of table
+        addtolist := true 
+    }
+    sentence := StrReplace(sentence, key, pickrandom(keytab%a_index%), , 1) ; pick a random word for each keyword and modify the sentence
+  }
+  if (instr(sentence, "#"))
+  {
+    Goto, ReplaceKeys ; Make another pass if generator chose options with additional options
+  }
+  SB_SetText(sentence, , 2)
+Return
+
+pickrandom(array)
+{
+  Random, randind, 1, array.Length()
+return array[randind]
+}
+
+findkeys()
+{
+  global sentence
+  global keylist
   Loop, 50 ; probably no need for max loop but whatever
   { ; finds all keywords in sentence
     if (mod(a_index, 2) == 0) ; Only check odd hashes to get start of word
@@ -84,35 +129,10 @@ ButtonAdv:
       Break ; Stop looking when you stop finding hashes
     }
   }
-
-  for ind,key in keylist
-  {
-    keynum := A_Index
-    keytab%keynum% := [] ; make a table for each keyword
-    loop, read, %A_WorkingDir%\advtabs\%filename%
-    {
-      if (A_Index == 1)
-        Continue ; not adding first line to table
-      if (addtolist == true and A_LoopReadLine != "{" and A_LoopReadLine != "}")
-        keytab%keynum%.Push(A_LoopReadLine) ; If we found the start of the table inside the brackets, start adding words line by line
-      if (instr(A_LoopReadLine, "}") and addtolist == true)
-      {
-        addtolist := False
-        Break ; stop adding after coming to end of list
-      }
-      if (addtolist == false and InStr(a_loopreadline, key)) ; found keyword signifying start of table
-        addtolist := true 
-    }
-    sentence := StrReplace(sentence, key, pickrandom(keytab%a_index%), , 1) ; pick a random word for each keyword and modify the sentence
-  }
-  ; duplicate keywords always pick same thing
-  pickrandom(array)
-  {
-    Random, randind, 1, array.Length()
-    return array[randind]
-  }
-  SB_SetText(sentence, , 2)
-Return
+}
 
 GuiClose:
 ExitApp
+
+; TODO: Save resizing between switching pages/modes
+; categories and org
