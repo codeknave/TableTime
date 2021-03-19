@@ -89,7 +89,7 @@ ReplaceKeys:
         addtolist := False
         Break ; stop adding after coming to end of list
       }
-      if (addtolist == false and InStr(a_loopreadline, key) and lastbracketseen == "}" or lastbracketseen == "") ; found keyword signifying start of table
+      if (addtolist == false and InStr(a_loopreadline, key) and (lastbracketseen == "}" or lastbracketseen == "")) ; found keyword signifying start of table
         addtolist := true 
     }
     sentence := StrReplace(sentence, key, pickrandom(keytab%a_index%), , 1) ; pick a random word for each keyword and modify the sentence
