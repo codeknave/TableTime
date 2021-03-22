@@ -4,6 +4,19 @@ SendMode Input ; Recommended for new scripts due to its superior speed and relia
 SetWorkingDir %A_ScriptDir% ; Ensures a consistent starting directory.
 #SingleInstance
 
+posX := A_ScreenWidth / 2
+posY := A_ScreenHeight / 2
+
+SavePOS() ; Every time the window moves, save position for rebuilding later
+{
+  global posX
+  global posY
+  Gui,+LastFound
+
+  WinGetPos,posX,posY,w,h 
+
+}
+OnMessage(0x0047, "SavePOS")
 ; Starting page for basic tabs
 BasicTabs:
   Gui, Destroy
@@ -19,7 +32,7 @@ BasicTabs:
   Gui, Font, S15 cRed Bold Italic, Verdana
   Gui, Add, Button, w130 h60 xm gAdvancedTabs, Advanced Tab
   Gui, +MaximizeBox MinimizeBox +Resize +MinSize300x200
-  Gui, show, , test
+  Gui, show, X%posX% Y%posY% , TableTime
 Return
 
 ButtonTest:
@@ -56,7 +69,7 @@ AdvancedTabs:
   Gui, Font, S15 cRed Bold Italic, Verdana
   Gui, Add, Button, w130 h60 xm gBasicTabs, Basic Tabs
   Gui, +MaximizeBox MinimizeBox +Resize +MinSize300x200
-  Gui, Show, , test
+  Gui, show, X%posX% Y%posY% , TableTime
 Return
 
 ButtonAdv:
@@ -134,5 +147,4 @@ findkeys()
 GuiClose:
 ExitApp
 
-; TODO: Save resizing between switching pages/modes
 ; categories and org
